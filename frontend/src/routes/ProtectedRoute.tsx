@@ -8,7 +8,7 @@ const ProtectedRoute: React.FC<{  children: React.ReactNode }> = ({ children }) 
     const token = useSelector((state: RootState) =>state.user.token);
   
     if (!token) {
-      return <Navigate to="/signup" replace />;
+      return <Navigate to="/login" replace />;
     }
   
     return <>{children}</>;

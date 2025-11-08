@@ -56,4 +56,25 @@ export class AuthService implements IAuthService {
             throw new Error("Invalid refresh token");
         }
     }
+
+    async changePassword(userId: string, currentPassword: string, newPassword: string): Promise<void> {
+        const user = await this._authRepo.findById(userId);
+        
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        // Verify current password
+        const isCurrentPasswordValid = await comparePassword(currentPassword, user.password);
+        if (!isCurrentPasswordValid) {
+            throw new Error("Current password is incorrect");
+        }
+
+        // Hash new password
+        const hashedNewPassword = await hashPassword(newPassword);
+        
+        // Update password using the model directly
+        const UserModel = (this._authRepo as any)._model;
+        await UserModel.findByIdAndUpdate(userId, { password: hashedNewPassword });
+    }
 }

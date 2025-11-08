@@ -9,16 +9,13 @@ export const API_ROUTES = {
   },
   
   // URL routes
-  URL: {
-    CREATE_SHORT_URL: '/create-shorturl',
-    USER_HISTORY: '/user-history',
-    REDIRECT: '/:shortId'
-  }
+ 
 } as const;
 
 // Base paths
 export const BASE_PATHS = {
-  AUTH: '/',
-  URL: '/url'
+  AUTH: '/api',
+  URL: '/url',
+  IMAGE: '/api/images'
 } as const;
 2

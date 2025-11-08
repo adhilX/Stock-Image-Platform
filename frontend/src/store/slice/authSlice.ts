@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from "@reduxjs/toolkit"
-import type IUser from "../../types/IUser"
+import type { IUser } from "../../types/auth.types"
 
 
 interface AuthState {
@@ -24,6 +24,7 @@ const authSlice = createSlice({
           },
         logout(state){
             state.token = null;
+            state.user = null;
         }
     }
 })

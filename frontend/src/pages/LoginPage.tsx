@@ -1,17 +1,53 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
+import { useDispatch, useSelector } from 'react-redux';
+import { Eye, EyeOff } from 'lucide-react';
 import { loginValidationSchema } from '../validations/loginPageValidation';
+import { userLogin } from '../services/authService';
+import { setToken, setUser } from '../store/slice/authSlice';
+import toast from 'react-hot-toast';
+import type { RootState } from '../store/store';
 
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-
-  const handleSubmit = (values: { email: string; password: string }) => {
+  const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const {token} = useSelector((state: RootState) => state.user);
+  useEffect(() => {
+    if (token) {
+      navigate('/');
+    }
+  }, [token, navigate]);
+  const handleSubmit = async (values: { email: string; password: string }) => {
     setIsLoading(true);
-    console.log('Login values:', values);
-    setTimeout(() => setIsLoading(false), 2000);
+    setError(null);
+    
+    try {
+      const response = await userLogin(values);
+      console.log('Login successful:', response);
+      
+      // Store JWT token and user details in Redux
+      if (response.accessToken) {
+        dispatch(setToken(response.accessToken));
+      }
+      if (response.user) {
+        dispatch(setUser(response.user));
+      }
+      
+      toast.success('Login successful!');
+      navigate('/');
+    } catch (error) {
+      console.error('Login error:', error);
+      setError(error instanceof Error ? error.message : 'Login failed. Please try again.');
+      toast.error(error instanceof Error ? error.message : 'Login failed. Please try again.');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -244,23 +280,38 @@ export default function LoginPage() {
               <Field name="password">
                 {({ field, meta }: any) => (
                   <div>
-                    <motion.input
-                      {...field}
-                      type="password"
-                      id="password"
-                      whileFocus={{ 
-                        scale: 1.02,
-                        borderColor: "rgba(34, 197, 94, 1)",
-                        boxShadow: "0 0 20px rgba(34, 197, 94, 0.3)"
-                      }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                      className={`w-full px-4 py-3 bg-black/50 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 ${
-                        meta.touched && meta.error 
-                          ? 'border-red-500/50' 
-                          : 'border-green-500/30'
-                      }`}
-                      placeholder="••••••••"
-                    />
+                    <div className="relative">
+                      <motion.input
+                        {...field}
+                        type={showPassword ? 'text' : 'password'}
+                        id="password"
+                        whileFocus={{ 
+                          scale: 1.02,
+                          borderColor: "rgba(34, 197, 94, 1)",
+                          boxShadow: "0 0 20px rgba(34, 197, 94, 0.3)"
+                        }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                        className={`w-full px-4 py-3 pr-12 bg-black/50 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 ${
+                          meta.touched && meta.error 
+                            ? 'border-red-500/50' 
+                            : 'border-green-500/30'
+                        }`}
+                        placeholder="••••••••"
+                      />
+                      <motion.button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </motion.button>
+                    </div>
                     {meta.touched && meta.error && (
                       <motion.div
                         initial={{ opacity: 0, y: -10 }}
@@ -281,7 +332,7 @@ export default function LoginPage() {
               transition={{ delay: 0.6 }}
               className="flex items-center justify-between text-sm"
             >
-              <label className="flex items-center text-gray-400 cursor-pointer group">
+              {/* <label className="flex items-center text-gray-400 cursor-pointer group">
                 <motion.input
                   type="checkbox"
                   whileHover={{ scale: 1.1 }}
@@ -289,16 +340,28 @@ export default function LoginPage() {
                   className="mr-2 w-4 h-4 bg-black/50 border-green-500/30 rounded focus:ring-green-500/20"
                 />
                 <span className="group-hover:text-gray-300 transition-colors">Remember me</span>
-              </label>
-              <motion.a
-                href="#"
+              </label> */}
+              {/* <motion.button
+                type="button"
                 whileHover={{ scale: 1.05, x: 5 }}
                 transition={{ type: "spring", stiffness: 400 }}
-                className="text-green-400 hover:text-green-300 transition-colors"
+                className="text-green-400 hover:text-green-300 transition-colors bg-transparent border-none cursor-pointer"
               >
                 Forgot password?
-              </motion.a>
+              </motion.button> */}
             </motion.div>
+
+            {/* Error Display */}
+            {/* {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-red-400 text-sm text-center"
+              >
+                {error}
+              </motion.div>
+            )} */}
 
             <motion.button
               type="submit"
@@ -349,14 +412,13 @@ export default function LoginPage() {
           >
             Don't have an account?{' '}
             <Link to="/signup">
-            <motion.a
-              href="#"
+            <motion.span
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 400 }}
               className="text-green-400 hover:text-green-300 font-semibold transition-colors inline-block"
             >
               Sign up
-            </motion.a>
+            </motion.span>
             </Link>
           </motion.p>
         </motion.div>

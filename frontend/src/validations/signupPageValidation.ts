@@ -1,11 +1,7 @@
 import * as Yup from "yup";
+import type { SignupFormValues } from "../types/auth.types";
 
-export interface SignupFormValues {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
+export type { SignupFormValues };
 
 export const initialValues: SignupFormValues = {
   name: "",

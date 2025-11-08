@@ -1,27 +1,29 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
-import { initialValues, validationSchema, type SignupFormValues } from '../validations/signupPageValidation';
+import { Eye, EyeOff } from 'lucide-react';
+import { initialValues, validationSchema } from '../validations/signupPageValidation';
 import { userSignup } from '../services/authService';
-import type IUser from '../types/IUser';
+import type { IUser, SignupFormValues } from '../types/auth.types';
 import toast from 'react-hot-toast';
-
+import type { RootState } from '../store/store';
+import { useSelector } from 'react-redux';
 export default function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false);
-  const [agreedToTerms, setAgreedToTerms] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
-
-  const handleSubmit = async (values: SignupFormValues) => {
-    if (!agreedToTerms) {
-      setError('You must agree to the terms and conditions');
-      return;
+  const {token} = useSelector((state: RootState) => state.user);
+  useEffect(() => {
+    if (token) {
+      navigate('/');
     }
-
+  }, [token, navigate]);
+  const handleSubmit = async (values: SignupFormValues) => {
+   
     setIsLoading(true);
-    setError(null);
     
     try {
       const userData: IUser = {
@@ -33,11 +35,10 @@ export default function SignUpPage() {
       
       await userSignup(userData);
       toast.success('Account created successfully!')
-      // Navigate to login page on successful signup
-      navigate('/login')        ;
+      navigate('/login')        
     } catch (error) {
       console.error('Signup error:', error);
-      setError(error instanceof Error ? error.message : 'An error occurred during signup');
+      toast.error(error instanceof Error ? error.message : 'An error occurred during signup');
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +57,6 @@ export default function SignUpPage() {
       className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden"
       onMouseMove={handleMouseMove}
     >
-      {/* Animated liquid background glows */}
       <motion.div
         className="absolute top-20 left-20 w-96 h-96 bg-green-500/20 rounded-full blur-3xl"
         animate={{
@@ -213,7 +213,7 @@ export default function SignUpPage() {
           </motion.div>
 
           {/* Error Display */}
-          {error && (
+          {/* {error && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
@@ -221,7 +221,7 @@ export default function SignUpPage() {
             >
               <p className="text-red-400 text-sm text-center">{error}</p>
             </motion.div>
-          )}
+          )} */}
 
           {/* Form */}
           <Formik
@@ -326,23 +326,38 @@ export default function SignUpPage() {
               <Field name="password">
                 {({ field, meta }: any) => (
                   <div>
-                    <motion.input
-                      {...field}
-                      type="password"
-                      id="password"
-                      whileFocus={{ 
-                        scale: 1.02,
-                        borderColor: "rgba(34, 197, 94, 1)",
-                        boxShadow: "0 0 20px rgba(34, 197, 94, 0.3)"
-                      }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                      className={`w-full px-4 py-3 bg-black/50 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 ${
-                        meta.touched && meta.error 
-                          ? 'border-red-500/50' 
-                          : 'border-green-500/30'
-                      }`}
-                      placeholder="••••••••"
-                    />
+                    <div className="relative">
+                      <motion.input
+                        {...field}
+                        type={showPassword ? 'text' : 'password'}
+                        id="password"
+                        whileFocus={{ 
+                          scale: 1.02,
+                          borderColor: "rgba(34, 197, 94, 1)",
+                          boxShadow: "0 0 20px rgba(34, 197, 94, 0.3)"
+                        }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                        className={`w-full px-4 py-3 pr-12 bg-black/50 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 ${
+                          meta.touched && meta.error 
+                            ? 'border-red-500/50' 
+                            : 'border-green-500/30'
+                        }`}
+                        placeholder="••••••••"
+                      />
+                      <motion.button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </motion.button>
+                    </div>
                     {meta.touched && meta.error && (
                       <motion.div
                         initial={{ opacity: 0, y: -10 }}
@@ -368,23 +383,38 @@ export default function SignUpPage() {
               <Field name="confirmPassword">
                 {({ field, meta }: any) => (
                   <div>
-                    <motion.input
-                      {...field}
-                      type="password"
-                      id="confirmPassword"
-                      whileFocus={{ 
-                        scale: 1.02,
-                        borderColor: "rgba(34, 197, 94, 1)",
-                        boxShadow: "0 0 20px rgba(34, 197, 94, 0.3)"
-                      }}
-                      transition={{ type: "spring", stiffness: 300 }}
-                      className={`w-full px-4 py-3 bg-black/50 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 ${
-                        meta.touched && meta.error 
-                          ? 'border-red-500/50' 
-                          : 'border-green-500/30'
-                      }`}
-                      placeholder="••••••••"
-                    />
+                    <div className="relative">
+                      <motion.input
+                        {...field}
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        id="confirmPassword"
+                        whileFocus={{ 
+                          scale: 1.02,
+                          borderColor: "rgba(34, 197, 94, 1)",
+                          boxShadow: "0 0 20px rgba(34, 197, 94, 0.3)"
+                        }}
+                        transition={{ type: "spring", stiffness: 300 }}
+                        className={`w-full px-4 py-3 pr-12 bg-black/50 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 ${
+                          meta.touched && meta.error 
+                            ? 'border-red-500/50' 
+                            : 'border-green-500/30'
+                        }`}
+                        placeholder="••••••••"
+                      />
+                      <motion.button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                      >
+                        {showConfirmPassword ? (
+                          <EyeOff className="w-5 h-5" />
+                        ) : (
+                          <Eye className="w-5 h-5" />
+                        )}
+                      </motion.button>
+                    </div>
                     {meta.touched && meta.error && (
                       <motion.div
                         initial={{ opacity: 0, y: -10 }}
@@ -398,7 +428,7 @@ export default function SignUpPage() {
                 )}
               </Field>
             </motion.div>
-
+{/* 
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -433,7 +463,7 @@ export default function SignUpPage() {
                   </motion.a>
                 </span>
               </label>
-            </motion.div>
+            </motion.div> */}
 
             <motion.button
               type="submit"
@@ -484,14 +514,13 @@ export default function SignUpPage() {
           >
             Already have an account?{' '}
             <Link to="/login">
-            <motion.a
-              href="#"
+            <motion.span
               whileHover={{ scale: 1.05 }}
               transition={{ type: "spring", stiffness: 400 }}
               className="text-green-400 hover:text-green-300 font-semibold transition-colors inline-block"
             >
               Sign in
-            </motion.a>
+            </motion.span>
             </Link>
           </motion.p>
         </motion.div>
