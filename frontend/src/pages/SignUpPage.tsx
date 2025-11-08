@@ -29,6 +29,7 @@ export default function SignUpPage() {
       const userData: IUser = {
         name: values.name,
         email: values.email,
+        phone: values.phone,
         password: values.password,
         confirmPassword: values.confirmPassword
       };
@@ -300,6 +301,48 @@ export default function SignUpPage() {
                           : 'border-green-500/30'
                       }`}
                       placeholder="your@email.com"
+                    />
+                    {meta.touched && meta.error && (
+                      <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="text-red-400 text-sm mt-1"
+                      >
+                        {meta.error}
+                      </motion.div>
+                    )}
+                  </div>
+                )}
+              </Field>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.55 }}
+            >
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-2">
+                Phone Number
+              </label>
+              <Field name="phone">
+                {({ field, meta }: any) => (
+                  <div>
+                    <motion.input
+                      {...field}
+                      type="tel"
+                      id="phone"
+                      whileFocus={{ 
+                        scale: 1.02,
+                        borderColor: "rgba(34, 197, 94, 1)",
+                        boxShadow: "0 0 20px rgba(34, 197, 94, 0.3)"
+                      }}
+                      transition={{ type: "spring", stiffness: 300 }}
+                      className={`w-full px-4 py-3 bg-black/50 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 ${
+                        meta.touched && meta.error 
+                          ? 'border-red-500/50' 
+                          : 'border-green-500/30'
+                      }`}
+                      placeholder="+1234567890"
                     />
                     {meta.touched && meta.error && (
                       <motion.div

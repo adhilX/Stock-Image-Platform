@@ -10,14 +10,14 @@ export class AuthService implements IAuthService {
     constructor(private _authRepo: IUserRepo) { }
 
     async registerUser(userData: IUser): Promise<IUser> {
-        const { name, email, password } = userData;
+        const { name, email, phone, password } = userData;
         const existEmail = await this._authRepo.findByEmail(email);
 
         if (existEmail) {
             throw new Error("User already exists");
         }
         const HashedPass = await hashPassword(password);
-        const user = await this._authRepo.create({ name, email, password: HashedPass });
+        const user = await this._authRepo.create({ name, email, phone, password: HashedPass });
         return user;
     }
 

@@ -6,6 +6,7 @@ export type { SignupFormValues };
 export const initialValues: SignupFormValues = {
   name: "",
   email: "",
+  phone: "",
   password: "",
   confirmPassword: "",
 };
@@ -17,6 +18,9 @@ export const validationSchema = Yup.object({
   email: Yup.string()
     .email("Invalid email format")
     .required("Email is required"),
+  phone: Yup.string()
+    .matches(/^[+]?[(]?[0-9]{1,4}[)]?[-\s.]?[(]?[0-9]{1,4}[)]?[-\s.]?[0-9]{1,9}$/, "Invalid phone number format")
+    .required("Phone number is required"),
   password: Yup.string()
     .min(6, "Password must be at least 6 characters")
     .required("Password is required"),

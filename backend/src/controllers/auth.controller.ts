@@ -8,9 +8,9 @@ import { AuthRequest } from "../middlewares/auth";
 
 export const registerController = async (req: Request, res: Response):Promise<void> => {
 
-     const { name, email, password } = req.body.user;
+     const { name, email, phone, password } = req.body.user;
      try {
-       const user = await authService.registerUser({ name, email, password })
+       const user = await authService.registerUser({ name, email, phone, password })
          res.status(StatusCode.CREATED).json({
               message: "User registered successfully",
               user: formatUserResponse(user)
