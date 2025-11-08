@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
 import { Image as ImageIcon } from 'lucide-react';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
-import LiquidOverlay from './LiquidOverlay';
-import UploadedImageCard from './UploadedImageCard';
+import LiquidOverlay from './ui/LiquidOverlay';
+import UploadedImageCard from './gallery/UploadedImageCard';
 import type { ImageItem } from '../../types/image.types';
 
 interface ImageGalleryProps {

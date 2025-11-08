@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { logout } from '../../store/slice/authSlice';
 import { userLogout } from '../../services/authService';
-import ChangePasswordModal from './ChangePasswordModal';
+import ChangePasswordModal from './modals/ChangePasswordModal';
 import toast from 'react-hot-toast';
 import type { RootState } from '../../store/store';
 

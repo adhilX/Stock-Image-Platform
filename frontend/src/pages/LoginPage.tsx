@@ -13,7 +13,6 @@ import type { RootState } from '../store/store';
 export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -25,7 +24,6 @@ export default function LoginPage() {
   }, [token, navigate]);
   const handleSubmit = async (values: { email: string; password: string }) => {
     setIsLoading(true);
-    setError(null);
     
     try {
       const response = await userLogin(values);
@@ -43,7 +41,6 @@ export default function LoginPage() {
       navigate('/');
     } catch (error) {
       console.error('Login error:', error);
-      setError(error instanceof Error ? error.message : 'Login failed. Please try again.');
       toast.error(error instanceof Error ? error.message : 'Login failed. Please try again.');
     } finally {
       setIsLoading(false);

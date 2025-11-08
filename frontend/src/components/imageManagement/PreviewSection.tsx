@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Image as ImageIcon } from 'lucide-react';
-import LiquidOverlay from './LiquidOverlay';
-import PreviewImageCard from './PreviewImageCard';
+import LiquidOverlay from './ui/LiquidOverlay';
+import PreviewImageCard from './upload/PreviewImageCard';
 import type { PreviewImage } from '../../types/image.types';
 
 interface PreviewSectionProps {
