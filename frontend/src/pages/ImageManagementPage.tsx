@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import toast from 'react-hot-toast';
-import { DndContext, closestCenter } from '@dnd-kit/core';
+import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
 import AnimatedBackground from '../components/imageManagement/ui/AnimatedBackground';
 import PageHeader from '../components/imageManagement/layout/PageHeader';
@@ -26,6 +26,21 @@ export default function ImageManagementPage() {
   const [selectedImage, setSelectedImage] = useState<ImageItem | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isTouchDevice = useRef(false);
+
+  // Configure sensors for drag and drop (including touch support)
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 200,
+        tolerance: 5,
+      },
+    })
+  );
 
   useEffect(() => {
     // Detect if device is touch-enabled
@@ -229,7 +244,6 @@ export default function ImageManagementPage() {
     <div 
       className="min-h-screen bg-black p-3 sm:p-4 md:p-8 relative overflow-hidden"
       onMouseMove={handleMouseMove}
-      style={{ touchAction: 'manipulation' }}
     >
       <AnimatedBackground mousePosition={mousePosition} />
 
@@ -262,7 +276,11 @@ export default function ImageManagementPage() {
             <p className="text-gray-400 mt-4">Loading images...</p>
           </div>
         ) : (
-          <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <DndContext 
+            sensors={sensors}
+            collisionDetection={closestCenter} 
+            onDragEnd={handleDragEnd}
+          >
             <ImageGallery
               images={selectedImages}
               mousePosition={mousePosition}

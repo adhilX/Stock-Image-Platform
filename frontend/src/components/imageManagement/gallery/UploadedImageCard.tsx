@@ -29,6 +29,7 @@ export default function UploadedImageCard({
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
+    touchAction: 'none' as const,
   };
 
   return (
@@ -53,9 +54,16 @@ export default function UploadedImageCard({
     >
       {/* Drag Handle - Visual indicator only */}
       <div
-        className="absolute top-2 left-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"
+        className="absolute top-2 left-2 z-20 opacity-0 sm:group-hover:opacity-100 sm:opacity-0 transition-opacity pointer-events-none"
       >
         <GripVertical className="w-5 h-5 text-green-400" />
+      </div>
+      
+      {/* Mobile drag indicator */}
+      <div className="absolute top-2 right-2 z-20 sm:hidden pointer-events-none">
+        <div className="w-6 h-6 bg-green-500/30 rounded flex items-center justify-center">
+          <GripVertical className="w-4 h-4 text-green-400" />
+        </div>
       </div>
 
       {/* Image */}
@@ -74,7 +82,12 @@ export default function UploadedImageCard({
         <h3 className="text-white font-medium mb-2 sm:mb-3 line-clamp-2 text-sm sm:text-base">{image.title}</h3>
         
         {/* Action Buttons */}
-        <div className="flex flex-col sm:flex-row gap-2" onPointerDown={(e) => e.stopPropagation()}>
+        <div 
+          className="flex flex-col sm:flex-row gap-2" 
+          onPointerDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          style={{ touchAction: 'manipulation' }}
+        >
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
