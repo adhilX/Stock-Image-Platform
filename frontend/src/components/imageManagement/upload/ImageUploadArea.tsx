@@ -24,17 +24,17 @@ const ImageUploadArea = forwardRef<HTMLInputElement, ImageUploadAreaProps>(({
       transition={{ duration: 0.8, delay: 0.2 }}
       className="mb-8"
     >
-      <div className="bg-zinc-900/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-green-500/20 p-6 md:p-8 relative overflow-hidden">
+      <div className="bg-zinc-900/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-green-500/20 p-4 sm:p-6 md:p-8 relative overflow-hidden">
         <LiquidOverlay mousePosition={mousePosition} />
 
         <div className="relative z-10">
-          <h2 className="text-2xl font-semibold text-white mb-4 flex items-center gap-2">
-            <Upload className="w-6 h-6 text-green-400" />
+          <h2 className="text-xl sm:text-2xl font-semibold text-white mb-4 flex items-center gap-2">
+            <Upload className="w-5 h-5 sm:w-6 sm:h-6 text-green-400" />
             Bulk Upload Images
           </h2>
           
           <div
-            className="border-2 border-dashed border-green-500/30 rounded-xl p-8 text-center hover:border-green-500/50 transition-all duration-300"
+            className="border-2 border-dashed border-green-500/30 rounded-xl p-4 sm:p-6 md:p-8 text-center hover:border-green-500/50 transition-all duration-300"
             onDragOver={onDragOver}
             onDrop={onDrop}
           >
@@ -54,18 +54,18 @@ const ImageUploadArea = forwardRef<HTMLInputElement, ImageUploadAreaProps>(({
               <motion.div
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center"
+                className="w-12 h-12 sm:w-16 sm:h-16 bg-green-500/20 rounded-full flex items-center justify-center"
               >
-                <Upload className="w-8 h-8 text-green-400" />
+                <Upload className="w-6 h-6 sm:w-8 sm:h-8 text-green-400" />
               </motion.div>
               <div>
-                <p className="text-white font-medium mb-1">Click to upload or drag and drop</p>
-                <p className="text-gray-400 text-sm">Multiple images supported (PNG, JPG, WEBP)</p>
+                <p className="text-white font-medium mb-1 text-sm sm:text-base">Click to upload or drag and drop</p>
+                <p className="text-gray-400 text-xs sm:text-sm">Multiple images supported (PNG, JPG, WEBP)</p>
               </div>
             </label>
           </div>
 
-          <p className="text-gray-400 text-sm mt-4 text-center">
+          <p className="text-gray-400 text-xs sm:text-sm mt-4 text-center">
             Note: You can add a specific title for each image after selection
           </p>
         </div>

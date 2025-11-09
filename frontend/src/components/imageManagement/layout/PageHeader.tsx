@@ -34,8 +34,8 @@ export default function PageHeader() {
           <ImageIcon className="w-8 h-8 text-white" />
         </motion.div>
       </motion.div>
-      <h1 className="text-4xl font-bold text-white mb-2">Image Management</h1>
-      <p className="text-gray-400">Upload, organize, and manage your stock images</p>
+      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">Image Management</h1>
+      <p className="text-gray-400 text-sm sm:text-base">Upload, organize, and manage your stock images</p>
     </motion.div>
   );
 }

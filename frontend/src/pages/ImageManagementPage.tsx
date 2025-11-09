@@ -220,7 +220,7 @@ export default function ImageManagementPage() {
 
   return (
     <div 
-      className="min-h-screen bg-black p-4 md:p-8 relative overflow-hidden"
+      className="min-h-screen bg-black p-3 sm:p-4 md:p-8 relative overflow-hidden"
       onMouseMove={handleMouseMove}
     >
       <AnimatedBackground mousePosition={mousePosition} />

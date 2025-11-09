@@ -70,11 +70,11 @@ export default function UploadedImageCard({
       </div>
 
       {/* Title */}
-      <div className="p-4">
-        <h3 className="text-white font-medium mb-3 line-clamp-2">{image.title}</h3>
+      <div className="p-3 sm:p-4">
+        <h3 className="text-white font-medium mb-2 sm:mb-3 line-clamp-2 text-sm sm:text-base">{image.title}</h3>
         
         {/* Action Buttons */}
-        <div className="flex gap-2" onPointerDown={(e) => e.stopPropagation()}>
+        <div className="flex flex-col sm:flex-row gap-2" onPointerDown={(e) => e.stopPropagation()}>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -82,10 +82,10 @@ export default function UploadedImageCard({
               e.stopPropagation();
               onEdit(imageId);
             }}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg transition-all duration-300 border border-green-500/30"
+            className="flex-1 flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded-lg transition-all duration-300 border border-green-500/30 text-xs sm:text-sm"
           >
-            <Edit2 className="w-4 h-4" />
-            <span className="text-sm">Edit</span>
+            <Edit2 className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span>Edit</span>
           </motion.button>
           <motion.button
             whileHover={{ scale: 1.05 }}
@@ -94,10 +94,10 @@ export default function UploadedImageCard({
               e.stopPropagation();
               onDelete(imageId);
             }}
-            className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-all duration-300 border border-red-500/30"
+            className="flex-1 flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-all duration-300 border border-red-500/30 text-xs sm:text-sm"
           >
-            <Trash2 className="w-4 h-4" />
-            <span className="text-sm">Delete</span>
+            <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span>Delete</span>
           </motion.button>
         </div>
       </div>

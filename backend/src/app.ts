@@ -14,6 +14,7 @@ app.use(cookieParser());
 connectDB();
 app.use(cors({ 
     origin: process.env.ORIGIN,
+    // origin :"*",
     credentials: true 
 }));
 

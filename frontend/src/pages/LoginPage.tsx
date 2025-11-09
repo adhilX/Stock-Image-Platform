@@ -41,6 +41,7 @@ export default function LoginPage() {
       navigate('/');
     } catch (error) {
       console.error('Login error:', error);
+      
       toast.error(error instanceof Error ? error.message : 'Login failed. Please try again.');
     } finally {
       setIsLoading(false);
@@ -62,7 +63,7 @@ export default function LoginPage() {
     >
       {/* Animated liquid background glows */}
       <motion.div
-        className="absolute top-20 left-20 w-96 h-96 bg-green-500/20 rounded-full blur-3xl"
+        className="absolute top-20 left-20 w-64 h-64 md:w-96 md:h-96 bg-green-500/20 rounded-full blur-3xl"
         animate={{
           scale: [1, 1.2, 1],
           opacity: [0.3, 0.5, 0.3],
@@ -93,7 +94,7 @@ export default function LoginPage() {
         }}
       />
       <motion.div
-        className="absolute bottom-20 right-20 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl"
+        className="absolute bottom-20 right-20 w-64 h-64 md:w-96 md:h-96 bg-emerald-500/20 rounded-full blur-3xl"
         animate={{
           scale: [1.2, 1, 1.2],
           opacity: [0.5, 0.3, 0.5],
@@ -124,7 +125,7 @@ export default function LoginPage() {
         }}
       />
       <motion.div
-        className="absolute top-1/2 left-1/2 w-80 h-80 bg-green-400/10 rounded-full blur-3xl"
+        className="absolute top-1/2 left-1/2 w-60 h-60 md:w-80 md:h-80 bg-green-400/10 rounded-full blur-3xl"
         animate={{
           scale: [1, 1.3, 1],
           opacity: [0.2, 0.4, 0.2],
@@ -163,7 +164,7 @@ export default function LoginPage() {
         className="relative z-10 w-full max-w-md"
       >
         <motion.div 
-          className="bg-zinc-900/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-green-500/20 p-8 md:p-10 relative overflow-hidden"
+          className="bg-zinc-900/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-green-500/20 p-6 sm:p-8 md:p-10 relative overflow-hidden"
           whileHover={{ 
             boxShadow: "0 0 40px rgba(34, 197, 94, 0.3)",
             borderColor: "rgba(34, 197, 94, 0.4)"
@@ -212,8 +213,8 @@ export default function LoginPage() {
                 </svg>
               </motion.div>
             </motion.div>
-            <h1 className="text-3xl font-bold text-white mb-2">Welcome Back</h1>
-            <p className="text-gray-400 text-sm">Access your creative stock library</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Welcome Back</h1>
+            <p className="text-gray-400 text-xs sm:text-sm">Access your creative stock library</p>
           </motion.div>
 
           {/* Form */}

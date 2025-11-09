@@ -45,15 +45,15 @@ export default function DeleteConfirmModal({ isOpen, onClose, image, onConfirm }
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          className="relative z-10 w-full max-w-md bg-zinc-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-red-500/20 overflow-hidden"
+          className="relative z-10 w-full max-w-md bg-zinc-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-red-500/20 overflow-hidden max-h-[90vh] overflow-y-auto"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-red-500/20">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5 text-white" />
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-red-500/20">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center">
+                <AlertTriangle className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
-              <h2 className="text-2xl font-bold text-white">Delete Image</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-white">Delete Image</h2>
             </div>
             <motion.button
               whileHover={{ scale: 1.1, rotate: 90 }}
@@ -67,8 +67,8 @@ export default function DeleteConfirmModal({ isOpen, onClose, image, onConfirm }
           </div>
 
           {/* Content */}
-          <div className="p-6 space-y-4">
-            <p className="text-gray-300">
+          <div className="p-4 sm:p-6 space-y-4">
+            <p className="text-gray-300 text-sm sm:text-base">
               Are you sure you want to delete this image? This action cannot be undone.
             </p>
 
@@ -83,21 +83,21 @@ export default function DeleteConfirmModal({ isOpen, onClose, image, onConfirm }
               </div>
             )}
 
-            <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4">
-              <p className="text-red-400 text-sm font-medium">
+            <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 sm:p-4">
+              <p className="text-red-400 text-xs sm:text-sm font-medium">
                 <strong>Title:</strong> {image.title}
               </p>
             </div>
           </div>
 
           {/* Footer */}
-          <div className="flex gap-4 p-6 border-t border-red-500/20">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-4 sm:p-6 border-t border-red-500/20">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={onClose}
               disabled={isDeleting}
-              className="flex-1 px-6 py-3 bg-zinc-800/50 hover:bg-zinc-800 text-gray-300 font-semibold rounded-lg border border-gray-600 hover:border-gray-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:flex-1 px-6 py-3 bg-zinc-800/50 hover:bg-zinc-800 text-gray-300 font-semibold rounded-lg border border-gray-600 hover:border-gray-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
             >
               Cancel
             </motion.button>
@@ -106,7 +106,7 @@ export default function DeleteConfirmModal({ isOpen, onClose, image, onConfirm }
               whileTap={{ scale: 0.98 }}
               onClick={handleConfirm}
               disabled={isDeleting}
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-lg shadow-lg shadow-red-500/50 hover:shadow-red-500/70 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group flex items-center justify-center gap-2"
+              className="w-full sm:flex-1 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-lg shadow-lg shadow-red-500/50 hover:shadow-red-500/70 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group flex items-center justify-center gap-2 text-sm sm:text-base"
             >
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-red-400 to-red-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"

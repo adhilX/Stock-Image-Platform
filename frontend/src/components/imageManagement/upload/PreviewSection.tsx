@@ -32,16 +32,16 @@ export default function PreviewSection({
       transition={{ duration: 0.8, delay: 0.3 }}
       className="mb-8"
     >
-      <div className="bg-zinc-900/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-green-500/20 p-6 md:p-8 relative overflow-hidden">
+      <div className="bg-zinc-900/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-green-500/20 p-4 sm:p-6 md:p-8 relative overflow-hidden">
         <LiquidOverlay mousePosition={mousePosition} />
 
         <div className="relative z-10">
-          <h2 className="text-2xl font-semibold text-white mb-6 flex items-center gap-2">
-            <ImageIcon className="w-6 h-6 text-green-400" />
+          <h2 className="text-xl sm:text-2xl font-semibold text-white mb-4 sm:mb-6 flex items-center gap-2">
+            <ImageIcon className="w-5 h-5 sm:w-6 sm:h-6 text-green-400" />
             Preview Images ({previewImages.length})
           </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-4 sm:mb-6">
             {previewImages.map((image, index) => (
               <PreviewImageCard
                 key={image.id}
@@ -54,13 +54,13 @@ export default function PreviewSection({
           </div>
 
           {/* Submit and Cancel Buttons */}
-          <div className="flex gap-4 justify-end">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-end">
             <motion.button
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               onClick={onCancel}
               disabled={isUploading}
-              className="px-6 py-3 bg-zinc-800/50 hover:bg-zinc-800 text-gray-300 font-semibold rounded-lg border border-gray-600 hover:border-gray-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto px-6 py-3 bg-zinc-800/50 hover:bg-zinc-800 text-gray-300 font-semibold rounded-lg border border-gray-600 hover:border-gray-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
             >
               Cancel
             </motion.button>
@@ -72,7 +72,7 @@ export default function PreviewSection({
               whileTap={{ scale: isUploading ? 1 : 0.97 }}
               onClick={onSubmit}
               disabled={isUploading}
-              className="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-lg shadow-lg shadow-green-500/50 hover:shadow-green-500/70 transition-all duration-300 relative overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-lg shadow-lg shadow-green-500/50 hover:shadow-green-500/70 transition-all duration-300 relative overflow-hidden group disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
             >
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-green-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"

@@ -22,7 +22,7 @@ export default function SignUpPage() {
     }
   }, [token, navigate]);
   const handleSubmit = async (values: SignupFormValues) => {
-   
+
     setIsLoading(true);
     
     try {
@@ -59,7 +59,7 @@ export default function SignUpPage() {
       onMouseMove={handleMouseMove}
     >
       <motion.div
-        className="absolute top-20 left-20 w-96 h-96 bg-green-500/20 rounded-full blur-3xl"
+        className="absolute top-20 left-20 w-64 h-64 md:w-96 md:h-96 bg-green-500/20 rounded-full blur-3xl"
         animate={{
           scale: [1, 1.2, 1],
           opacity: [0.3, 0.5, 0.3],
@@ -90,7 +90,7 @@ export default function SignUpPage() {
         }}
       />
       <motion.div
-        className="absolute bottom-20 right-20 w-96 h-96 bg-emerald-500/20 rounded-full blur-3xl"
+        className="absolute bottom-20 right-20 w-64 h-64 md:w-96 md:h-96 bg-emerald-500/20 rounded-full blur-3xl"
         animate={{
           scale: [1.2, 1, 1.2],
           opacity: [0.5, 0.3, 0.5],
@@ -121,7 +121,7 @@ export default function SignUpPage() {
         }}
       />
       <motion.div
-        className="absolute top-1/2 left-1/2 w-80 h-80 bg-green-400/10 rounded-full blur-3xl"
+        className="absolute top-1/2 left-1/2 w-60 h-60 md:w-80 md:h-80 bg-green-400/10 rounded-full blur-3xl"
         animate={{
           scale: [1, 1.3, 1],
           opacity: [0.2, 0.4, 0.2],
@@ -160,7 +160,7 @@ export default function SignUpPage() {
         className="relative z-10 w-full max-w-md"
       >
         <motion.div 
-          className="bg-zinc-900/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-green-500/20 p-8 md:p-10 relative overflow-hidden"
+          className="bg-zinc-900/50 backdrop-blur-xl rounded-2xl shadow-2xl border border-green-500/20 p-6 sm:p-8 md:p-10 relative overflow-hidden"
           whileHover={{ 
             boxShadow: "0 0 40px rgba(34, 197, 94, 0.3)",
             borderColor: "rgba(34, 197, 94, 0.4)"
@@ -209,8 +209,8 @@ export default function SignUpPage() {
                 </svg>
               </motion.div>
             </motion.div>
-            <h1 className="text-3xl font-bold text-white mb-2">Create Account</h1>
-            <p className="text-gray-400 text-sm">Join our creative stock library</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">Create Account</h1>
+            <p className="text-gray-400 text-xs sm:text-sm">Join our creative stock library</p>
           </motion.div>
 
           {/* Error Display */}
@@ -427,23 +427,23 @@ export default function SignUpPage() {
                 {({ field, meta }: any) => (
                   <div>
                     <div className="relative">
-                      <motion.input
-                        {...field}
+                    <motion.input
+                      {...field}
                         type={showConfirmPassword ? 'text' : 'password'}
-                        id="confirmPassword"
-                        whileFocus={{ 
-                          scale: 1.02,
-                          borderColor: "rgba(34, 197, 94, 1)",
-                          boxShadow: "0 0 20px rgba(34, 197, 94, 0.3)"
-                        }}
-                        transition={{ type: "spring", stiffness: 300 }}
+                      id="confirmPassword"
+                      whileFocus={{ 
+                        scale: 1.02,
+                        borderColor: "rgba(34, 197, 94, 1)",
+                        boxShadow: "0 0 20px rgba(34, 197, 94, 0.3)"
+                      }}
+                      transition={{ type: "spring", stiffness: 300 }}
                         className={`w-full px-4 py-3 pr-12 bg-black/50 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 ${
-                          meta.touched && meta.error 
-                            ? 'border-red-500/50' 
-                            : 'border-green-500/30'
-                        }`}
-                        placeholder="••••••••"
-                      />
+                        meta.touched && meta.error 
+                          ? 'border-red-500/50' 
+                          : 'border-green-500/30'
+                      }`}
+                      placeholder="••••••••"
+                    />
                       <motion.button
                         type="button"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}

@@ -42,15 +42,15 @@ export default function PreviewImageCard({
       </div>
 
       {/* Title Input */}
-      <div className="p-4">
-        <label className="block text-sm font-medium text-gray-300 mb-2">
+      <div className="p-3 sm:p-4">
+        <label className="block text-xs sm:text-sm font-medium text-gray-300 mb-2">
           Image Title
         </label>
         <input
           type="text"
           value={image.title}
           onChange={(e) => onTitleChange(image.id, e.target.value)}
-          className="w-full px-3 py-2 bg-black/50 border border-green-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-300"
+          className="w-full px-3 py-2 bg-black/50 border border-green-500/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-green-500 focus:ring-2 focus:ring-green-500/20 transition-all duration-300 text-sm sm:text-base"
           placeholder="Enter image title"
         />
       </div>

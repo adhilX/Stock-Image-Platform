@@ -107,15 +107,15 @@ export default function EditImageModal({ isOpen, onClose, image, onSave }: EditI
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.9, y: 20 }}
-          className="relative z-10 w-full max-w-2xl bg-zinc-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-green-500/20 overflow-hidden"
+          className="relative z-10 w-full max-w-2xl bg-zinc-900/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-green-500/20 overflow-hidden max-h-[90vh] overflow-y-auto"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-green-500/20">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-emerald-600 rounded-lg flex items-center justify-center">
-                <ImageIcon className="w-5 h-5 text-white" />
+          <div className="flex items-center justify-between p-4 sm:p-6 border-b border-green-500/20">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-green-400 to-emerald-600 rounded-lg flex items-center justify-center">
+                <ImageIcon className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
-              <h2 className="text-2xl font-bold text-white">Edit Image</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-white">Edit Image</h2>
             </div>
             <motion.button
               whileHover={{ scale: 1.1, rotate: 90 }}
@@ -128,7 +128,7 @@ export default function EditImageModal({ isOpen, onClose, image, onSave }: EditI
           </div>
 
           {/* Content */}
-          <div className="p-6 space-y-6">
+          <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
             {/* Image Preview */}
             <div className="relative">
               <label className="block text-sm font-medium text-gray-300 mb-2">
@@ -193,13 +193,13 @@ export default function EditImageModal({ isOpen, onClose, image, onSave }: EditI
           </div>
 
           {/* Footer */}
-          <div className="flex gap-4 p-6 border-t border-green-500/20">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-4 sm:p-6 border-t border-green-500/20">
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               onClick={handleClose}
               disabled={isSaving}
-              className="flex-1 px-6 py-3 bg-zinc-800/50 hover:bg-zinc-800 text-gray-300 font-semibold rounded-lg border border-gray-600 hover:border-gray-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full sm:flex-1 px-6 py-3 bg-zinc-800/50 hover:bg-zinc-800 text-gray-300 font-semibold rounded-lg border border-gray-600 hover:border-gray-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
             >
               Cancel
             </motion.button>
@@ -208,7 +208,7 @@ export default function EditImageModal({ isOpen, onClose, image, onSave }: EditI
               whileTap={{ scale: 0.98 }}
               onClick={handleSave}
               disabled={isSaving || !title.trim()}
-              className="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-lg shadow-lg shadow-green-500/50 hover:shadow-green-500/70 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+              className="w-full sm:flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold rounded-lg shadow-lg shadow-green-500/50 hover:shadow-green-500/70 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group text-sm sm:text-base"
             >
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-green-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
