@@ -25,8 +25,12 @@ export default function ImageManagementPage() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<ImageItem | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const isTouchDevice = useRef(false);
 
   useEffect(() => {
+    // Detect if device is touch-enabled
+    isTouchDevice.current = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    
     const loadUserImages = async () => {
       try {
         setIsLoading(true);
@@ -45,6 +49,9 @@ export default function ImageManagementPage() {
   }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Skip mouse move updates on touch devices to prevent flickering
+    if (isTouchDevice.current) return;
+    
     const rect = e.currentTarget.getBoundingClientRect();
     setMousePosition({
       x: e.clientX - rect.left,
@@ -222,6 +229,7 @@ export default function ImageManagementPage() {
     <div 
       className="min-h-screen bg-black p-3 sm:p-4 md:p-8 relative overflow-hidden"
       onMouseMove={handleMouseMove}
+      style={{ touchAction: 'manipulation' }}
     >
       <AnimatedBackground mousePosition={mousePosition} />
 

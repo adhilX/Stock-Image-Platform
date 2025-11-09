@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
@@ -16,6 +16,12 @@ export default function SignUpPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
   const {token} = useSelector((state: RootState) => state.user);
+  const isTouchDevice = useRef(false);
+  
+  useEffect(() => {
+    isTouchDevice.current = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  }, []);
+  
   useEffect(() => {
     if (token) {
       navigate('/');
@@ -46,6 +52,9 @@ export default function SignUpPage() {
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Skip mouse move updates on touch devices to prevent flickering
+    if (isTouchDevice.current) return;
+    
     const rect = e.currentTarget.getBoundingClientRect();
     setMousePosition({
       x: e.clientX - rect.left,
@@ -57,6 +66,7 @@ export default function SignUpPage() {
     <div 
       className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden"
       onMouseMove={handleMouseMove}
+      style={{ touchAction: 'manipulation' }}
     >
       <motion.div
         className="absolute top-20 left-20 w-64 h-64 md:w-96 md:h-96 bg-green-500/20 rounded-full blur-3xl"

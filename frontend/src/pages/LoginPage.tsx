@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { Formik, Form, Field } from 'formik';
@@ -17,6 +17,12 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {token} = useSelector((state: RootState) => state.user);
+  const isTouchDevice = useRef(false);
+  
+  useEffect(() => {
+    isTouchDevice.current = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  }, []);
+  
   useEffect(() => {
     if (token) {
       navigate('/');
@@ -49,6 +55,9 @@ export default function LoginPage() {
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    // Skip mouse move updates on touch devices to prevent flickering
+    if (isTouchDevice.current) return;
+    
     const rect = e.currentTarget.getBoundingClientRect();
     setMousePosition({
       x: e.clientX - rect.left,
@@ -60,6 +69,7 @@ export default function LoginPage() {
     <div 
       className="min-h-screen bg-black flex items-center justify-center p-4 relative overflow-hidden"
       onMouseMove={handleMouseMove}
+      style={{ touchAction: 'manipulation' }}
     >
       {/* Animated liquid background glows */}
       <motion.div
