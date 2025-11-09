@@ -182,7 +182,7 @@ export default function ImageManagementPage() {
         setSelectedImages(prev =>
           prev.map(img => (getImageId(img) === id) ? { ...img, ...formatImage(response.image) } : img)
         );
-        toast.success('Image updated successfully');
+        // toast.success('Image updated successfully');
       }
     } catch (error) {
       console.error('Update error:', error);
