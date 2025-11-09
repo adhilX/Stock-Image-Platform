@@ -182,7 +182,7 @@ export default function ImageManagementPage() {
         setSelectedImages(prev =>
           prev.map(img => (getImageId(img) === id) ? { ...img, ...formatImage(response.image) } : img)
         );
-        // toast.success('Image updated successfully');
+        toast.success('Image updated successfully');
       }
     } catch (error) {
       console.error('Update error:', error);
@@ -231,7 +231,7 @@ export default function ImageManagementPage() {
 
     if (orderUpdates.length > 0) {
       updateImageOrder(orderUpdates)
-        .then(() => toast.success('Image order updated'))
+        // .then(() => toast.success('Image order updated'))
         .catch((error) => {
           console.error('Error updating image order:', error);
           toast.error(error instanceof Error ? error.message : 'Failed to update image order');
