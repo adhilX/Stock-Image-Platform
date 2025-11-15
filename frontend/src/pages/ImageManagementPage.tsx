@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import toast from 'react-hot-toast';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { DndContext, closestCenter, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
 import type { DragEndEvent } from '@dnd-kit/core';
 import AnimatedBackground from '../components/imageManagement/ui/AnimatedBackground';
@@ -15,17 +16,18 @@ import { saveImages, getUserImages, updateImage, deleteImage, updateImageOrder }
 import { formatImage, getFileName, findImageById, getImageId, reorderArray } from '../utils/imageHelpers';
 import type { ImageItem, PreviewImage } from '../types/image.types';
 
+const IMAGES_PER_PAGE = 10;
+
 export default function ImageManagementPage() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-  const [selectedImages, setSelectedImages] = useState<ImageItem[]>([]);
   const [previewImages, setPreviewImages] = useState<PreviewImage[]>([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<ImageItem | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isTouchDevice = useRef(false);
+  const queryClient = useQueryClient();
 
   // Configure sensors for drag and drop (including touch support)
   const sensors = useSensors(
@@ -42,26 +44,46 @@ export default function ImageManagementPage() {
     })
   );
 
+  // Infinite query for images
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    error
+  } = useInfiniteQuery({
+    queryKey: ['userImages'],
+    queryFn: async ({ pageParam = 1 }) => {
+      const response = await getUserImages(pageParam, IMAGES_PER_PAGE);
+      return {
+        images: response.data || response.images || [],
+        hasMore: response.hasMore ?? false,
+        page: response.page || pageParam,
+        total: response.total || 0
+      };
+    },
+    getNextPageParam: (lastPage, allPages) => {
+      return lastPage.hasMore ? allPages.length + 1 : undefined;
+    },
+    initialPageParam: 1,
+  });
+
+  // Flatten all pages into a single array
+  const selectedImages: ImageItem[] = data?.pages.flatMap(page => 
+    page.images.map(formatImage)
+  ) || [];
+
   useEffect(() => {
     // Detect if device is touch-enabled
     isTouchDevice.current = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    
-    const loadUserImages = async () => {
-      try {
-        setIsLoading(true);
-        const response = await getUserImages();
-        if (response?.images) {
-          setSelectedImages(response.images.map(formatImage));
-        }
-      } catch (error) {
-        console.error('Error loading images:', error);
-        toast.error('Failed to load images');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadUserImages();
   }, []);
+
+  useEffect(() => {
+    if (error) {
+      toast.error('Failed to load images');
+    }
+  }, [error]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     // Skip mouse move updates on touch devices to prevent flickering
@@ -136,13 +158,13 @@ export default function ImageManagementPage() {
         }))
       );
 
-      const response = await saveImages(imagesToSave);
-      if (response?.images) {
-        setSelectedImages(prev => [...prev, ...response.images.map(formatImage)]);
-      }
+      await saveImages(imagesToSave);
       
       previewImages.forEach(img => URL.revokeObjectURL(img.preview));
       setPreviewImages([]);
+
+      // Invalidate and refetch images
+      await queryClient.invalidateQueries({ queryKey: ['userImages'] });
 
       toast.success(`Successfully uploaded ${imagesToSave.length} image${imagesToSave.length > 1 ? 's' : ''}!`, {
         id: uploadToast
@@ -177,13 +199,12 @@ export default function ImageManagementPage() {
     if (!id) return;
 
     try {
-      const response = await updateImage(id, data);
-      if (response?.image) {
-        setSelectedImages(prev =>
-          prev.map(img => (getImageId(img) === id) ? { ...img, ...formatImage(response.image) } : img)
-        );
-        toast.success('Image updated successfully');
-      }
+      await updateImage(id, data);
+      
+      // Invalidate and refetch images
+      await queryClient.invalidateQueries({ queryKey: ['userImages'] });
+      
+      toast.success('Image updated successfully');
     } catch (error) {
       console.error('Update error:', error);
       toast.error(error instanceof Error ? error.message : 'Failed to update image');
@@ -199,7 +220,10 @@ export default function ImageManagementPage() {
 
     try {
       await deleteImage(imageId);
-      setSelectedImages(prev => prev.filter(img => getImageId(img) !== imageId));
+      
+      // Invalidate and refetch images
+      await queryClient.invalidateQueries({ queryKey: ['userImages'] });
+      
       toast.success('Image deleted successfully');
       setDeleteModalOpen(false);
       setSelectedImage(null);
@@ -210,33 +234,59 @@ export default function ImageManagementPage() {
     }
   };
 
-  const handleDragEnd = (event: DragEndEvent) => {
+  const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
 
-    const previousImages = [...selectedImages];
     const draggedIndex = selectedImages.findIndex(img => getImageId(img) === active.id);
     const targetIndex = selectedImages.findIndex(img => getImageId(img) === over.id);
 
     if (draggedIndex === -1 || targetIndex === -1) return;
 
+    // Optimistically update the cache
+    queryClient.setQueryData(['userImages'], (oldData: any) => {
+      if (!oldData) return oldData;
+
+      const allImages = oldData.pages.flatMap((page: any) => page.images || []);
+      const reorderedImages = reorderArray(allImages, draggedIndex, targetIndex)
+        .map((img: any, index: number) => ({ ...img, order: index }));
+
+      // Reconstruct pages with updated order
+      const newPages = [];
+      let currentIndex = 0;
+      for (const page of oldData.pages) {
+        const pageImages = reorderedImages.slice(currentIndex, currentIndex + (page.images?.length || 0));
+        newPages.push({
+          ...page,
+          images: pageImages
+        });
+        currentIndex += pageImages.length;
+      }
+
+      return {
+        ...oldData,
+        pages: newPages
+      };
+    });
+
     const reorderedImages = reorderArray(selectedImages, draggedIndex, targetIndex)
       .map((img, index) => ({ ...img, order: index }));
-
-    setSelectedImages(reorderedImages);
 
     const orderUpdates = reorderedImages
       .map((img, index) => ({ id: getImageId(img), order: index }))
       .filter(item => item.id);
 
     if (orderUpdates.length > 0) {
-      updateImageOrder(orderUpdates)
-        // .then(() => toast.success('Image order updated'))
-        .catch((error) => {
-          console.error('Error updating image order:', error);
-          toast.error(error instanceof Error ? error.message : 'Failed to update image order');
-          setSelectedImages(previousImages);
-        });
+      try {
+        await updateImageOrder(orderUpdates);
+        // Invalidate to ensure sync with backend
+        await queryClient.invalidateQueries({ queryKey: ['userImages'] });
+      } catch (error) {
+        console.error('Error updating image order:', error);
+        toast.error(error instanceof Error ? error.message : 'Failed to update image order');
+        // Refetch on error to restore correct state
+        await queryClient.invalidateQueries({ queryKey: ['userImages'] });
+      }
     }
   };
 
@@ -286,6 +336,9 @@ export default function ImageManagementPage() {
               mousePosition={mousePosition}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              hasNextPage={hasNextPage}
+              isFetchingNextPage={isFetchingNextPage}
+              onLoadMore={fetchNextPage}
             />
           </DndContext>
         )}

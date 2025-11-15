@@ -1,5 +1,5 @@
 import { IImage } from "../entity/image.entity";
-import { IImageRepo } from "../interfaces/Irepo/Iimage.repo";
+import { IImageRepo, PaginatedResult } from "../interfaces/Irepo/Iimage.repo";
 import Image, { MongooseImage } from "../models/image.model";
 import BaseRepo from "./base.repo";
 
@@ -8,9 +8,21 @@ export default class ImageRepo extends BaseRepo<MongooseImage, IImage> implement
         super(Image);
     }
 
-    async findByUserId(userId: string): Promise<IImage[]> {
-        const images = await this._model.find({ userId }).sort({ order: 1 });
-        return images.map(img => this.toEntity(img));
+    async findByUserId(userId: string, page: number = 1, limit: number = 20): Promise<PaginatedResult<IImage>> {
+        const skip = (page - 1) * limit;
+        
+        const [images, total] = await Promise.all([
+            this._model.find({ userId }).sort({ order: 1 }).skip(skip).limit(limit),
+            this._model.countDocuments({ userId })
+        ]);
+        
+        return {
+            data: images.map(img => this.toEntity(img)),
+            total,
+            page,
+            limit,
+            hasMore: skip + images.length < total
+        };
     }
 
     async findById(id: string): Promise<IImage | null> {

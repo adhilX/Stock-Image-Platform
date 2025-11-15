@@ -17,9 +17,10 @@ export const saveImages = async (images: SaveImageData[]) => {
   }
 };
 
-export const getUserImages = async () => {
+export const getUserImages = async (page: number = 1, limit: number = 20) => {
   try {
     const response = await axiosInstance.get("/images", {
+      params: { page, limit },
       withCredentials: true
     });
     return response?.data;

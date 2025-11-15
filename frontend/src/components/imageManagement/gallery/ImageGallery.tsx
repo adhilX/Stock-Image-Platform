@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Image as ImageIcon } from 'lucide-react';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
@@ -10,15 +11,51 @@ interface ImageGalleryProps {
   mousePosition: { x: number; y: number };
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
+  onLoadMore?: () => void;
 }
 
 export default function ImageGallery({
   images,
   mousePosition,
   onEdit,
-  onDelete
+  onDelete,
+  hasNextPage = false,
+  isFetchingNextPage = false,
+  onLoadMore
 }: ImageGalleryProps) {
   const imageIds = images.map(img => img.id || img._id || '').filter(Boolean);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    if (!hasNextPage || !onLoadMore || isFetchingNextPage) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const firstEntry = entries[0];
+        if (firstEntry.isIntersecting) {
+          onLoadMore();
+        }
+      },
+      {
+        rootMargin: '200px', // Trigger 200px before the element is visible
+        threshold: 0.1
+      }
+    );
+
+    const currentRef = loadMoreRef.current;
+    if (currentRef) {
+      observer.observe(currentRef);
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef);
+      }
+    };
+  }, [hasNextPage, onLoadMore, isFetchingNextPage]);
   
   if (images.length === 0) {
     return (
@@ -65,6 +102,18 @@ export default function ImageGallery({
                 />
               ))}
             </div>
+            
+            {/* Infinite scroll trigger */}
+            {hasNextPage && (
+              <div ref={loadMoreRef} className="py-6 flex justify-center">
+                {isFetchingNextPage && (
+                  <div className="flex items-center gap-2 text-gray-400">
+                    <div className="w-5 h-5 border-2 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+                    <span className="text-sm">Loading more images...</span>
+                  </div>
+                )}
+              </div>
+            )}
           </SortableContext>
         </div>
       </div>

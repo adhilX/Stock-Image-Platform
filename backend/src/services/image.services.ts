@@ -12,8 +12,8 @@ export class ImageService implements IImageService {
         return savedImages;
     }
 
-    async getUserImages(userId: string): Promise<IImage[]> {
-        return await this._imageRepo.findByUserId(userId);
+    async getUserImages(userId: string, page: number = 1, limit: number = 20) {
+        return await this._imageRepo.findByUserId(userId, page, limit);
     }
 
     async updateImage(id: string, userId: string, imageData: Partial<IImage>): Promise<IImage> {

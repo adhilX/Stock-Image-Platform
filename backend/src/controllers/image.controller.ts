@@ -47,11 +47,14 @@ export const getUserImagesController = async (req: Request, res: Response): Prom
             return;
         }
 
-        const images = await imageService.getUserImages(userId);
+        const page = parseInt(req.query.page as string) || 1;
+        const limit = parseInt(req.query.limit as string) || 20;
+
+        const result = await imageService.getUserImages(userId, page, limit);
         
         res.status(StatusCode.OK).json({
             message: "Images retrieved successfully",
-            images
+            ...result
         });
     } catch (error) {
         handleControllerError(error, res, "getUserImages");
