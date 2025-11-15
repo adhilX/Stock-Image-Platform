@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { LogOut, User, Key } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { logout } from '../../../store/slice/authSlice';
 import { userLogout } from '../../../services/authService';
 import ChangePasswordModal from '../modals/ChangePasswordModal';
@@ -12,17 +13,21 @@ import type { RootState } from '../../../store/store';
 export default function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { user } = useSelector((state: RootState) => state.user);
   const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
       await userLogout();
+      // Clear all React Query cache
+      queryClient.clear();
       dispatch(logout());
       toast.success('Logged out successfully');
     } catch (error) {
       console.error('Logout error:', error);
-      // Even if API call fails, clear local state
+      // Even if API call fails, clear local state and cache
+      queryClient.clear();
       dispatch(logout());
       toast.error('Logged out locally');
       navigate('/login');
