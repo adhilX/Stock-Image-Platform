@@ -1,11 +1,14 @@
 import { Request, Response } from "express";
-import { imageService } from "../DI/imageDI";
 import { StatusCode } from "../constants/statusCodes";
 import { handleControllerError } from "../utils/responseError";
 import { IImage } from "../entity/image.entity";
 import { AuthRequest } from "../middlewares/auth";
+import { IImageService } from "../interfaces/Iservice/IImage.service";
 
-export const saveImagesController = async (req: Request, res: Response): Promise<void> => {
+export class ImageController{
+    constructor(private _imageService:IImageService){}
+
+saveImagesController = async (req: Request, res: Response): Promise<void> => {
     try {
         const userId = (req as AuthRequest).user?.id;
         if (!userId) {
@@ -28,7 +31,7 @@ export const saveImagesController = async (req: Request, res: Response): Promise
             order: img.order !== undefined ? img.order : index
         }));
 
-        const savedImages = await imageService.saveImages(imagesWithUserId);
+        const savedImages = await this._imageService.saveImages(imagesWithUserId);
         
         res.status(StatusCode.CREATED).json({
             message: "Images saved successfully",
@@ -39,7 +42,7 @@ export const saveImagesController = async (req: Request, res: Response): Promise
     }
 };
 
-export const getUserImagesController = async (req: Request, res: Response): Promise<void> => {
+    getUserImagesController = async (req: Request, res: Response): Promise<void> => {
     try {
         const userId = (req as AuthRequest).user?.id;
         if (!userId) {
@@ -50,7 +53,7 @@ export const getUserImagesController = async (req: Request, res: Response): Prom
         const page = parseInt(req.query.page as string) || 1;
         const limit = parseInt(req.query.limit as string) || 20;
 
-        const result = await imageService.getUserImages(userId, page, limit);
+        const result = await this._imageService.getUserImages(userId, page, limit);
         
         res.status(StatusCode.OK).json({
             message: "Images retrieved successfully",
@@ -61,7 +64,7 @@ export const getUserImagesController = async (req: Request, res: Response): Prom
     }
 };
 
-export const updateImageController = async (req: Request, res: Response): Promise<void> => {
+ updateImageController = async (req: Request, res: Response): Promise<void> => {
     try {
         const userId = (req as AuthRequest).user?.id;
         if (!userId) {
@@ -72,7 +75,7 @@ export const updateImageController = async (req: Request, res: Response): Promis
         const { id } = req.params;
         const { image, title } = req.body;
 
-        const updatedImage = await imageService.updateImage(id, userId, { image, title });
+        const updatedImage = await this._imageService.updateImage(id, userId, { image, title });
         
         res.status(StatusCode.OK).json({
             message: "Image updated successfully",
@@ -83,7 +86,7 @@ export const updateImageController = async (req: Request, res: Response): Promis
     }
 };
 
-export const deleteImageController = async (req: Request, res: Response): Promise<void> => {
+ deleteImageController = async (req: Request, res: Response): Promise<void> => {
     try {
         const userId = (req as AuthRequest).user?.id;
         if (!userId) {
@@ -92,7 +95,7 @@ export const deleteImageController = async (req: Request, res: Response): Promis
         }
 
         const { id } = req.params;
-        await imageService.deleteImage(id, userId);
+        await this._imageService.deleteImage(id, userId);
         
         res.status(StatusCode.OK).json({
             message: "Image deleted successfully"
@@ -102,7 +105,7 @@ export const deleteImageController = async (req: Request, res: Response): Promis
     }
 };
 
-export const updateImageOrderController = async (req: Request, res: Response): Promise<void> => {
+ updateImageOrderController = async (req: Request, res: Response): Promise<void> => {
     try {
         const userId = (req as AuthRequest).user?.id;
         if (!userId) {
@@ -117,7 +120,7 @@ export const updateImageOrderController = async (req: Request, res: Response): P
             return;
         }
 
-        await imageService.updateImageOrder(images);
+        await this._imageService.updateImageOrder(images);
         
         res.status(StatusCode.OK).json({
             message: "Image order updated successfully"
@@ -127,3 +130,4 @@ export const updateImageOrderController = async (req: Request, res: Response): P
     }
 };
 
+}

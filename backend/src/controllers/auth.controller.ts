@@ -1,16 +1,22 @@
 import { Request, Response } from "express";
-import { authService } from "../DI/authDI";
 import { StatusCode } from "../constants/statusCodes";
 import { formatUserResponse } from "../utils/responseError";
 import { setRefreshTokenCookie, clearRefreshTokenCookie } from "../utils/cookieUtils";
 import { handleControllerError } from "../utils/responseError";
 import { AuthRequest } from "../middlewares/auth";
+import { IAuthService } from "../interfaces/Iservice/IAuth.service";
 
-export const registerController = async (req: Request, res: Response):Promise<void> => {
+export  class AuthController{
+
+constructor(private _authService:IAuthService){}
+
+
+
+registerController = async (req: Request, res: Response):Promise<void> => {
 
      const { name, email, phone, password } = req.body.user;
      try {
-       const user = await authService.registerUser({ name, email, phone, password })
+       const user = await this._authService.registerUser({ name, email, phone, password })
          res.status(StatusCode.CREATED).json({
               message: "User registered successfully",
               user: formatUserResponse(user)
@@ -23,11 +29,11 @@ export const registerController = async (req: Request, res: Response):Promise<vo
 
 
 
-export const loginController = async (req: Request, res: Response): Promise<void> => {
+  loginController = async (req: Request, res: Response): Promise<void> => {
      const { email, password } = req.body;
      console.log(email, password);
      try {
-         const { user, accessToken, refreshToken } = await authService.loginUser(email, password);
+         const { user, accessToken, refreshToken } = await this._authService.loginUser(email, password);
          
          setRefreshTokenCookie(res, refreshToken);
 
@@ -42,7 +48,7 @@ export const loginController = async (req: Request, res: Response): Promise<void
      }
 };
 
-export const refreshTokenController = async (req: Request, res: Response): Promise<void> => {
+ refreshTokenController = async (req: Request, res: Response): Promise<void> => {
     try {
         const refreshToken = req.cookies.refreshToken;
         
@@ -51,7 +57,7 @@ export const refreshTokenController = async (req: Request, res: Response): Promi
             return;
         }
 
-        const { accessToken, refreshToken: newRefreshToken } = await authService.refreshToken(refreshToken);
+        const { accessToken, refreshToken: newRefreshToken } = await this._authService.refreshToken(refreshToken);
         
         setRefreshTokenCookie(res, newRefreshToken);
 
@@ -64,8 +70,7 @@ export const refreshTokenController = async (req: Request, res: Response): Promi
         handleControllerError(error, res, "refreshToken", StatusCode.UNAUTHORIZED);
     }
 };
-
-export const logoutController = async (req: Request, res: Response): Promise<void> => {
+  logoutController = async (req: Request, res: Response): Promise<void> => {
     try {
         clearRefreshTokenCookie(res);
 
@@ -75,7 +80,7 @@ export const logoutController = async (req: Request, res: Response): Promise<voi
     }
 };
 
-export const changePasswordController = async (req: Request, res: Response): Promise<void> => {
+ changePasswordController = async (req: Request, res: Response): Promise<void> => {
     try {
         const userId = (req as AuthRequest).user?.id;
         if (!userId) {
@@ -95,10 +100,12 @@ export const changePasswordController = async (req: Request, res: Response): Pro
             return;
         }
 
-        await authService.changePassword(userId, currentPassword, newPassword);
+        await this._authService.changePassword(userId, currentPassword, newPassword);
 
         res.status(StatusCode.OK).json({ message: "Password changed successfully" });
     } catch (error) {
         handleControllerError(error, res, "changePassword");
     }
 };
+
+}
